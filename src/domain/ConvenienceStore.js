@@ -2,7 +2,10 @@ import * as fs from "node:fs";
 import Product from "./Product.js";
 import Quantity from "./Quantity.js";
 import Promotion from "./Promotion.js";
+import Cart from "./Cart.js";
 import OutputView from "../view/OutputView.js";
+import InputView from "../view/InputView.js";
+import { MESSAGES } from "../constants/messages.js";
 
 class ConvenienceStore {
   #products;
@@ -11,12 +14,21 @@ class ConvenienceStore {
     this.getPromotionList();
     this.#products = this.getProductList();
     this.printMenu();
+    await this.#addCart();
   }
 
   printMenu() {
     OutputView.printWelcomeGreeting();
     OutputView.printProducts(this.#products);
     OutputView.printNewLine();
+  }
+
+  async #addCart() {
+    const addCartProduct = await InputView.readItem(MESSAGES.input.askProductAndCount);
+    const cart = new Cart(addCartProduct);
+    cart.addCartProduct();
+
+    // TODO 재고 확인
   }
 
   getPromotionList() {

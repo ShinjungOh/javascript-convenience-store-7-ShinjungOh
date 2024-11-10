@@ -5,10 +5,10 @@ import Promotion from "./Promotion.js";
 import Cart from "./Cart.js";
 import OutputView from "../view/OutputView.js";
 import InputView from "../view/InputView.js";
-import { MESSAGES } from "../constants/messages.js";
 
 class ConvenienceStore {
   #products;
+  #cart;
 
   async buy() {
     this.getPromotionList();
@@ -24,9 +24,11 @@ class ConvenienceStore {
   }
 
   async #addCart() {
-    const addCartProduct = await InputView.readItem(MESSAGES.input.askProductAndCount);
-    const cart = new Cart(addCartProduct);
-    cart.addCartProduct();
+    const cartInput = await InputView.addCart();
+    this.#cart = new Cart();
+    this.#cart.addCart(cartInput);
+
+    console.log('cart', this.#cart.getCart());
 
     // TODO 재고 확인
   }

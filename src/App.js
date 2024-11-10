@@ -1,11 +1,9 @@
-import InputView from "./view/InputView.js";
-import OutputView from "./view/OutputView.js";
+import ConvenienceStore from "./domain/ConvenienceStore.js";
 
 class App {
   async run() {
-    OutputView.printWelcomeGreeting();
-    OutputView.printProducts();
-    await InputView.readItem();
+    const convenienceStore = new ConvenienceStore();
+    await convenienceStore.buy();
   }
 }
 

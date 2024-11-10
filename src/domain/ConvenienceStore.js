@@ -8,20 +8,18 @@ class ConvenienceStore {
   #products;
 
   async buy() {
-    await this.getPromotionList();
-    await this.getProductList();
+    this.getPromotionList();
+    this.#products = this.getProductList();
     this.printMenu();
   }
 
   printMenu() {
     OutputView.printWelcomeGreeting();
-
-    // TODO 상품 목록 출력 - 상품명, 가격, 프로모션 이름, 재고
-
-    OutputView.printProducts();
+    OutputView.printProducts(this.#products);
+    OutputView.printNewLine();
   }
 
-  async getPromotionList() {
+  getPromotionList() {
     try {
       const data = fs.readFileSync('public/promotions.md', "utf-8");
       const [_, ...promotionBody] = data.trim().split('\n');
@@ -42,23 +40,22 @@ class ConvenienceStore {
       return promotionMap;
     } catch (e) {
       console.log(e);
-      return [];
+      return new Map();
     }
   }
 
-  async getProductList() {
+  getProductList() {
     try {
       const data = fs.readFileSync('public/products.md', "utf-8");
       const [_, ...productBody] = data.trim().split('\n');
       const productMap = new Map();
-      const promotionList = await this.getPromotionList();
+      const promotionList = this.getPromotionList();
 
       productBody.forEach((element) => {
         const body = element.split(',');
         const [name, price, quantity, promotion] = body;
         const hasProduct = productMap.has(name);
 
-        // 처음, 행사
         if (!hasProduct && promotion !== 'null') {
           const product = new Product({
             name,
@@ -72,7 +69,6 @@ class ConvenienceStore {
           productMap.set(name, product);
         }
 
-        // 처음, 널
         if (!hasProduct && promotion === 'null') {
           const product = new Product({
             name,
@@ -86,27 +82,21 @@ class ConvenienceStore {
           productMap.set(name, product);
         }
 
-        // 중복, 행사
         if (hasProduct && promotion !== 'null') {
           const product = productMap.get(name);
           product.setPromotion(promotion);
           product.quantity.setIncreasePromotion(parseInt(quantity, 10));
         }
 
-        // 중복, 널
         if (hasProduct && promotion === 'null') {
           const product = productMap.get(name);
           product.quantity.setIncreaseTotal(parseInt(quantity, 10));
         }
       });
-      console.log(productMap.forEach((data) => {
-        data.printProducts()
-      }));
-      console.log(productMap.size)
       return productMap;
     } catch (e) {
       console.log(e);
-      return [];
+      return new Map();
     }
   }
 }

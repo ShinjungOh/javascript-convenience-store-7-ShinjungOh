@@ -1,8 +1,8 @@
 class Product {
-  #name
-  #price
-  #quantity
-  #promotion
+  #name;
+  #price;
+  #quantity;
+  #promotion;
 
   constructor(product) {
     this.#name = product.name;

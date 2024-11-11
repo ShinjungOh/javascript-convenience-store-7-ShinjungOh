@@ -11,6 +11,7 @@ import { MESSAGES } from "../constants/messages.js";
 class ConvenienceStore {
   #products;
   #cart;
+  #order;
 
   constructor() {
     this.#cart = new Cart();
@@ -19,16 +20,33 @@ class ConvenienceStore {
   async buy() {
     this.getPromotionList();
     this.#products = this.getProductList();
-    this.printMenu();
-    await this.#addCart();
-    await this.#applyMembership();
-    this.#cart.print();
+    await this.#startShopping();
   }
 
   printMenu() {
     OutputView.printWelcomeGreeting();
     OutputView.printProducts(this.#products);
     OutputView.printNewLine();
+  }
+
+  async #startShopping() {
+    this.printMenu();
+    await this.#addCart();
+    await this.#applyMembership();
+    this.#order.add(this.#cart);
+
+    const continueShoppingAnswer = await InputView.askContinueShopping();
+    if (continueShoppingAnswer === 'Y') {
+      this.#cart.clear();
+      return this.#startShopping();
+    }
+
+    this.#printReceipt();
+  }
+
+  #printReceipt() {
+    const receipt = this.#order.calculateTotal();
+    // TODO 최종 영수증 출력
   }
 
   async #applyMembership() {

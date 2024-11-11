@@ -18,11 +18,14 @@ class ConvenienceStore {
   constructor() {
     this.#cart = new Cart();
     this.#order = new Order();
+    this.#products = null;
   }
 
   async buy() {
-    this.getPromotionList();
-    this.#products = this.getProductList();
+    if (!this.#products) {
+      this.getPromotionList();
+      this.#products = this.getProductList();
+    }
     await this.#startShopping();
   }
 

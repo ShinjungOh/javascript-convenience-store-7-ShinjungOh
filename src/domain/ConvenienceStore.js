@@ -15,6 +15,7 @@ class ConvenienceStore {
     this.#products = this.getProductList();
     this.printMenu();
     await this.#addCart();
+    this.#cart.print();
   }
 
   printMenu() {
@@ -24,11 +25,9 @@ class ConvenienceStore {
   }
 
   async #addCart() {
-    const cartInput = await InputView.addCart();
+    const cartItemList = await InputView.readLineAddCartItemList();
     this.#cart = new Cart();
-    this.#cart.addCart(cartInput);
-
-    console.log('cart', this.#cart.getCart());
+    this.#cart.initial(cartItemList);
 
     // TODO 재고 확인
   }

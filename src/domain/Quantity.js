@@ -18,9 +18,18 @@ class Quantity {
     this.#total = this.#total + quantity;
   }
 
+  setDecreaseTotal(quantity) {
+    this.#total = this.#total - quantity;
+  }
+
   setIncreasePromotion(quantity) {
     this.#total = this.#total + quantity;
     this.#promotion = this.#promotion + quantity;
+  }
+
+  setDecreasePromotion(quantity) {
+    this.#total = this.#total - quantity;
+    this.#promotion = this.#promotion - quantity;
   }
 }
 

@@ -9,6 +9,10 @@ class Cart {
     return this.#cart;
   }
 
+  setItem(name, cartItem) {
+    this.#cart.set(name, cartItem);
+  }
+
   print() {
     this.#cart.forEach((cartIem) => {
       console.log(cartIem.getCartItem());

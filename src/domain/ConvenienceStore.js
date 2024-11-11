@@ -36,7 +36,14 @@ class ConvenienceStore {
       this.#validateIsExistProduct(cartItem.name);
       this.#validateIsOutOfStock(cartItem);
 
-      this.#cart.set(cartItem.name, new CartItem(cartItem))
+      // 카트에 넣기
+      this.#cart.setItem(cartItem.name, new CartItem(cartItem));
+
+      // 재고 변경 관리하기
+      const product = this.#products.get(cartItem.name);
+      product.quantity.setDecreasePromotion(cartItem.quantity);
+
+      // console.log(product.quantity.getQuantity());
     });
   }
 

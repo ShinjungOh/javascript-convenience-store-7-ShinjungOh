@@ -7,6 +7,26 @@ class Promotion {
   #startDate;
   #endDate;
 
+  get name() {
+    return this.#name;
+  }
+
+  get buy() {
+    return this.#buy;
+  }
+
+  get get() {
+    return this.#get;
+  }
+
+  get startDate() {
+    return this.#startDate;
+  }
+
+  get endDate() {
+    return this.#endDate;
+  }
+
   constructor(promotion) {
     this.#name = promotion.name;
     this.#buy = promotion.buy;

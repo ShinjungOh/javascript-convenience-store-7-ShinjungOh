@@ -7,6 +7,14 @@ class Quantity {
     this.#promotion = promotion;
   }
 
+  get total() {
+    return this.#total;
+  }
+
+  get promotion() {
+    return this.#promotion;
+  }
+
   getQuantity() {
     return {
       total: this.#total,

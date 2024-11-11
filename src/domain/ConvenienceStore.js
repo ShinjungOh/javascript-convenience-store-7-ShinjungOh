@@ -32,39 +32,39 @@ class ConvenienceStore {
 
   async #addCart() {
     const cartItemList = await InputView.readLineAddCartItemList();
-    cartItemList.forEach((cartItem) => {
+    for await (const cartItem of cartItemList) {
       this.#validateIsExistProduct(cartItem.name);
       this.#validateIsOutOfStock(cartItem);
 
       const product = this.#products.get(cartItem.name);
-      const promotion = product.getProduct().promotion;
+      const promotion = product.promotion;
 
       let quantityPromotion = 0;
 
       if (promotion && promotion.isPromotionSeason()) {
-        const buyQuantity = promotion.getPromotion().buy;
-        const getQuantity = promotion.getPromotion().get;
-        quantityPromotion = Math.floor(cartItem.quantity / buyQuantity) * getQuantity;
+        const leftPromotionQuantity = product.quantity.promotion;
+
+        if (cartItem.quantity <= leftPromotionQuantity) {
+          product.quantity.setDecreasePromotion(cartItem.quantity);
+        }
+
+        if (cartItem.quantity > leftPromotionQuantity) {
+          const leftTotalQuantity = cartItem.quantity - leftPromotionQuantity;
+          product.quantity.setDecreasePromotion(leftPromotionQuantity);
+
+
+          product.quantity.setDecreaseTotal(leftTotalQuantity);
+        }
+
+        quantityPromotion = Math.floor(cartItem.quantity / promotion.buy) * promotion.get;
 
         if (quantityPromotion > 0) {
-          const applyPromotion = InputView.askApplyPromotion(cartItem.name);
+          const applyPromotion = await InputView.askApplyPromotion(cartItem.name);
 
           if (applyPromotion === 'Y') {
             cartItem.quantity = cartItem.quantity + quantityPromotion;
           }
         }
-      }
-
-      const leftPromotionQuantity = product.quantity.getQuantity().promotion;
-
-      if (cartItem.quantity <= leftPromotionQuantity) {
-        product.quantity.setDecreasePromotion(cartItem.quantity);
-      }
-
-      if (cartItem.quantity > leftPromotionQuantity) {
-        const leftTotalQuantity = cartItem.quantity - leftPromotionQuantity;
-        product.quantity.setDecreasePromotion(leftPromotionQuantity);
-        product.quantity.setDecreaseTotal(leftTotalQuantity);
       }
 
       this.#cart.setItem(cartItem.name, new CartItem({
@@ -73,7 +73,8 @@ class ConvenienceStore {
       }));
 
       console.log(product.quantity.getQuantity());
-    });
+
+    }
   }
 
   #validateIsExistProduct(item) {
@@ -86,7 +87,7 @@ class ConvenienceStore {
 
   #validateIsOutOfStock(item) {
     const product = this.#products.get(item.name);
-    const availableQuantity = product.quantity.getQuantity().total;
+    const availableQuantity = product.quantity.total;
 
     if (item.quantity > availableQuantity) {
       throw new Error(MESSAGES.error.outOfStock);

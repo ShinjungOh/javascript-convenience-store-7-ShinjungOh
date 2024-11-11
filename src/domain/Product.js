@@ -11,6 +11,22 @@ class Product {
     this.#promotion = product.promotion || null;
   }
 
+  get name() {
+    return this.#name;
+  }
+
+  get price() {
+    return this.#price;
+  }
+
+  get quantity() {
+    return this.#quantity;
+  }
+
+  get promotion() {
+    return this.#promotion;
+  }
+
   setPromotion(promotion) {
     this.#promotion = promotion;
   }
@@ -31,10 +47,6 @@ class Product {
       quantity: this.#quantity,
       promotion: this.#promotion,
     }
-  }
-
-  get quantity() {
-    return this.#quantity;
   }
 }
 

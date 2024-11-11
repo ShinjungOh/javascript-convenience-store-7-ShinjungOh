@@ -36,11 +36,22 @@ class ConvenienceStore {
       this.#validateIsExistProduct(cartItem.name);
       this.#validateIsOutOfStock(cartItem);
 
-      // 카트에 넣기
-      this.#cart.setItem(cartItem.name, new CartItem(cartItem));
-
-      // 재고 변경 관리하기
       const product = this.#products.get(cartItem.name);
+      const promotion = product.getProduct().promotion;
+
+      let quantityPromotion = 0;
+
+      if (promotion && promotion.isPromotionSeason()) {
+        const buyQuantity = promotion.getPromotion().buy;
+        const getQuantity = promotion.getPromotion().get;
+        quantityPromotion = Math.floor(cartItem.quantity / buyQuantity) * getQuantity;
+      }
+
+      this.#cart.setItem(cartItem.name, new CartItem({
+        ...cartItem,
+        quantityPromotion,
+      }));
+
       product.quantity.setDecreasePromotion(cartItem.quantity);
 
       // console.log(product.quantity.getQuantity());

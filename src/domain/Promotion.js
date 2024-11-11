@@ -1,16 +1,18 @@
+import { MissionUtils } from "@woowacourse/mission-utils";
+
 class Promotion {
-  #name
-  #buy
-  #get
-  #startDate
-  #endDate
+  #name;
+  #buy;
+  #get;
+  #startDate;
+  #endDate;
 
   constructor(promotion) {
     this.#name = promotion.name;
     this.#buy = promotion.buy;
     this.#get = promotion.get;
-    this.#startDate = promotion.startDate;
-    this.#endDate = promotion.endDate;
+    this.#startDate = new Date(promotion.startDate);
+    this.#endDate = new Date(promotion.endDate);
   }
 
   getPromotion() {
@@ -21,6 +23,11 @@ class Promotion {
       startDate: this.#startDate,
       endDate: this.#endDate,
     }
+  }
+
+  isPromotionSeason() {
+    const today = MissionUtils.DateTimes.now();
+    return today >= this.#startDate && today <= this.#endDate;
   }
 }
 

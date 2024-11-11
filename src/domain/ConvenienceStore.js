@@ -44,16 +44,35 @@ class ConvenienceStore {
       if (promotion && promotion.isPromotionSeason()) {
         const leftPromotionQuantity = product.quantity.promotion;
 
+        // 프로모션 재고 O
         if (cartItem.quantity <= leftPromotionQuantity) {
           product.quantity.setDecreasePromotion(cartItem.quantity);
         }
 
+        // 프로모션 재고 X
         if (cartItem.quantity > leftPromotionQuantity) {
           const leftTotalQuantity = cartItem.quantity - leftPromotionQuantity;
           product.quantity.setDecreasePromotion(leftPromotionQuantity);
 
+          // 일반 재고 O
+          if (product.quantity.total >= leftTotalQuantity) {
+            product.quantity.setDecreaseTotal(leftTotalQuantity);
+          }
 
-          product.quantity.setDecreaseTotal(leftTotalQuantity);
+          // 일반 재고 부족
+          if (product.quantity.total < leftTotalQuantity) {
+            const leftQuantity = leftTotalQuantity - product.quantity.total;
+            const answerApplyNormalPrice = await InputView.askCanNotApplyPromotion(cartItem.name, leftQuantity);
+
+            if (answerApplyNormalPrice === 'Y') {
+              product.quantity.setDecreaseTotal(product.quantity.total);
+            }
+
+            if (answerApplyNormalPrice === 'N') {
+              cartItem.quantity = leftPromotionQuantity + product.quantity.total;
+              product.quantity.setDecreaseTotal(product.quantity.total);
+            }
+          }
         }
 
         quantityPromotion = Math.floor(cartItem.quantity / promotion.buy) * promotion.get;
@@ -73,7 +92,6 @@ class ConvenienceStore {
       }));
 
       console.log(product.quantity.getQuantity());
-
     }
   }
 

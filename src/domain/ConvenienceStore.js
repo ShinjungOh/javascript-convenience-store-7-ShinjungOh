@@ -47,8 +47,8 @@ class ConvenienceStore {
   }
 
   #printReceipt() {
-    const receipt = new Receipt(this.#products, this.#order);
-    // TODO 프린트 출력
+    const receiptData = Receipt.makeReceiptData(this.#products, this.#order);
+    OutputView.printReceipt(receiptData);
   }
 
   async #applyMembership() {
@@ -69,19 +69,16 @@ class ConvenienceStore {
         const currentProduct = this.#products.get(cartItem.name);
         const promotion = currentProduct.promotion;
 
-        // 행사 상품이 아니면 그냥 담기
         if (!promotion || !promotion.isPromotionSeason()) {
           currentProduct.quantity.setDecreaseTotal(cartItem.quantity);
           this.#createCartItem(cartItem.name, cartItem.quantity, 0);
           continue;
         }
 
-        // 행사 상품의 남은 수량 확인하고 계산하기
         const leftQuantity = currentProduct.quantity.promotion;
         const count = Math.floor(cartItem.quantity / promotion.buy);
         const freeQuantity = count * promotion.get;
 
-        // 더 사면 무료로 받을 수 있는지 확인하기
         if (count > 0) {
           const giveaway = (count * promotion.buy + promotion.get) - cartItem.quantity;
           if (giveaway > 0) {
@@ -90,7 +87,6 @@ class ConvenienceStore {
             if (applyPromotionAnswer === 'Y') {
               const total = count * promotion.buy + promotion.get;
 
-              // 행사 재고가 충분하면 추가 증정
               if (total <= leftQuantity) {
                 currentProduct.quantity.setDecreasePromotion(total);
                 this.#createCartItem(cartItem.name, total, promotion.get);
@@ -100,17 +96,14 @@ class ConvenienceStore {
           }
         }
 
-        // 행사 상품 재고가 부족할 때
         if (cartItem.quantity > leftQuantity) {
           const normalNeed = cartItem.quantity - leftQuantity;
           const applyNormalPriceAnswer = await InputView.askCanNotApplyPromotion(cartItem.name, normalNeed);
 
-          // 일반 재고로 구매할지 선택
           if (applyNormalPriceAnswer === 'Y') {
             const count = Math.floor(leftQuantity / promotion.buy);
             const free = count * promotion.get;
 
-            // 행사 재고와 일반 재고 모두 사용
             currentProduct.quantity.setDecreasePromotion(leftQuantity);
             currentProduct.quantity.setDecreaseTotal(normalNeed);
 
@@ -120,7 +113,6 @@ class ConvenienceStore {
               free
             );
           } else {
-            // 행사 재고만큼만 구매하기
             const count = Math.floor(leftQuantity / promotion.buy);
             const base = count * promotion.buy;
             const free = count * promotion.get;
@@ -131,7 +123,6 @@ class ConvenienceStore {
           continue;
         }
 
-        // 행사 재고가 충분할 때 정상적으로 처리
         currentProduct.quantity.setDecreasePromotion(cartItem.quantity);
         this.#createCartItem(
           cartItem.name,
@@ -140,7 +131,7 @@ class ConvenienceStore {
         );
       }
     } catch (e) {
-      console.error(e.message);
+      console.log(e.message);
       await this.#addCart();
     }
   }

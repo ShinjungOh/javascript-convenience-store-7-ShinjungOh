@@ -58,6 +58,49 @@ class OutputView {
     }
   }
 
+  static printReceipt(receiptData) {
+    MissionUtils.Console.print('===========W 편의점=============');
+    MissionUtils.Console.print('상품명          수량    금액');
+
+    receiptData.items.forEach(item => {
+      const nameColumn = item.name.length * 2 <= 12
+        ? item.name.padEnd(12, ' ')
+        : item.name.padEnd(10, ' ');
+      const quantityColumn = String(item.quantity).padStart(2, ' ').padEnd(6, ' ');
+      const priceColumn = addNumberComma(item.price).padStart(7, ' ');
+      MissionUtils.Console.print(`${nameColumn}${quantityColumn}${priceColumn}`);
+    });
+
+    if (receiptData.giveawayItems.length > 0) {
+      MissionUtils.Console.print('===========증   정=============');
+      receiptData.giveawayItems.forEach(item => {
+        const nameColumn = item.name.length * 2 <= 12
+          ? item.name.padEnd(12, ' ')
+          : item.name.padEnd(10, ' ');
+        const quantityColumn = String(item.quantity).padStart(2, ' ');
+        MissionUtils.Console.print(`${nameColumn}${quantityColumn}`);
+      });
+    }
+
+    MissionUtils.Console.print('==============================');
+
+    const baseNamePadding = 16;
+    const amountPadding = 7;
+
+    const totalQuantity = String(receiptData.items[0].quantity).padStart(2, ' ').padEnd(6, ' ');
+    const totalAmount = addNumberComma(receiptData.totalAmount).padStart(amountPadding, ' ');
+    MissionUtils.Console.print(`${'총구매액'.padEnd(baseNamePadding, ' ')}${totalQuantity}${totalAmount}`);
+
+    const discountAmount = `-${addNumberComma(receiptData.promotionDiscount)}`.padStart(amountPadding, ' ');
+    MissionUtils.Console.print(`${'행사할인'.padEnd(baseNamePadding + 6, ' ')}${discountAmount}`);
+
+    const membershipAmount = `-${addNumberComma(receiptData.membershipDiscount)}`.padStart(amountPadding, ' ');
+    MissionUtils.Console.print(`${'멤버십할인'.padEnd(baseNamePadding + 6, ' ')}${membershipAmount}`);
+
+    const finalAmount = addNumberComma(receiptData.finalAmount).padStart(amountPadding, ' ');
+    MissionUtils.Console.print(`${'내실돈'.padEnd(baseNamePadding + 6, ' ')}${finalAmount}`);
+  }
+
   static printNewLine() {
     MissionUtils.Console.print('');
   }

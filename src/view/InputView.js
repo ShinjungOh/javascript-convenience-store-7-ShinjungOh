@@ -16,16 +16,32 @@ class InputView {
       });
   }
 
-  static async askApplyPromotion(product) {
-    const input = await MissionUtils.Console.readLineAsync(`현재 ${product}은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)\n`);
+  static async askApplyPromotion(productName) {
+    const input = await MissionUtils.Console.readLineAsync(`현재 ${productName}은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)\n`);
 
     this.#validateYesOrNo(input);
 
     return input;
   }
 
-  static async askCanNotApplyPromotion(product, quantity) {
-    const input = await MissionUtils.Console.readLineAsync(`현재 ${product} ${quantity}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\n`);
+  static async askCanNotApplyPromotion(productName, quantity) {
+    const input = await MissionUtils.Console.readLineAsync(`현재 ${productName} ${quantity}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\n`);
+
+    this.#validateYesOrNo(input);
+
+    return input;
+  }
+
+  static async applyMembership() {
+    const input = await this.readItem(MESSAGES.input.askApplyMembership);
+
+    this.#validateYesOrNo(input);
+
+    return input;
+  }
+
+  static async askContinueShopping() {
+    const input = await InputView.readItem(MESSAGES.input.askContinueShopping);
 
     this.#validateYesOrNo(input);
 

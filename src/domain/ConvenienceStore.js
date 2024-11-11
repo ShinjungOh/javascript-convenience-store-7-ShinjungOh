@@ -1,3 +1,4 @@
+import { MissionUtils } from "@woowacourse/mission-utils";
 import * as fs from "node:fs";
 import Product from "./Product.js";
 import Promotion from "./Promotion.js";
@@ -134,7 +135,7 @@ class ConvenienceStore {
         );
       }
     } catch (e) {
-      console.log(e.message);
+      MissionUtils.Console.print(e.message);
       await this.#addCart();
     }
   }
@@ -191,7 +192,7 @@ class ConvenienceStore {
       });
       return promotionMap;
     } catch (e) {
-      console.log(e);
+      MissionUtils.Console.print(e);
       return new Map();
     }
   }
@@ -247,7 +248,7 @@ class ConvenienceStore {
       });
       return productMap;
     } catch (e) {
-      console.log(e);
+      MissionUtils.Console.print(e);
       return new Map();
     }
   }

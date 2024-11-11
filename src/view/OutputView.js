@@ -59,8 +59,15 @@ class OutputView {
   }
 
   static printReceipt(receiptData) {
-    MissionUtils.Console.print('===========W 편의점=============');
-    MissionUtils.Console.print('상품명          수량    금액');
+    const equalSign = '=';
+    const giveaway = equalSign.padEnd(13, '=')
+      + '증'.padEnd(7)
+      + '정'
+      + equalSign.padEnd(15, '=');
+    const details = '상품명'.padEnd(18) + '수량'.padEnd(8) + '금액'.padEnd(6);
+
+    MissionUtils.Console.print('==============W 편의점================');
+    MissionUtils.Console.print(details);
 
     receiptData.items.forEach(item => {
       const nameColumn = item.name.length * 2 <= 12
@@ -72,7 +79,7 @@ class OutputView {
     });
 
     if (receiptData.giveawayItems.length > 0) {
-      MissionUtils.Console.print('===========증   정=============');
+      MissionUtils.Console.print(giveaway);
       receiptData.giveawayItems.forEach(item => {
         const nameColumn = item.name.length * 2 <= 12
           ? item.name.padEnd(12, ' ')
@@ -82,23 +89,23 @@ class OutputView {
       });
     }
 
-    MissionUtils.Console.print('==============================');
+    MissionUtils.Console.print(equalSign.padEnd(38, '='));
 
-    const baseNamePadding = 16;
-    const amountPadding = 7;
+    const baseNamePadding = 18;
+    const amountPadding = 10;
 
     const totalQuantity = String(receiptData.items[0].quantity).padStart(2, ' ').padEnd(6, ' ');
     const totalAmount = addNumberComma(receiptData.totalAmount).padStart(amountPadding, ' ');
     MissionUtils.Console.print(`${'총구매액'.padEnd(baseNamePadding, ' ')}${totalQuantity}${totalAmount}`);
 
     const discountAmount = `-${addNumberComma(receiptData.promotionDiscount)}`.padStart(amountPadding, ' ');
-    MissionUtils.Console.print(`${'행사할인'.padEnd(baseNamePadding + 6, ' ')}${discountAmount}`);
+    MissionUtils.Console.print(`${'행사할인'.padEnd(baseNamePadding + 4, ' ')}${discountAmount}`);
 
     const membershipAmount = `-${addNumberComma(receiptData.membershipDiscount)}`.padStart(amountPadding, ' ');
-    MissionUtils.Console.print(`${'멤버십할인'.padEnd(baseNamePadding + 6, ' ')}${membershipAmount}`);
+    MissionUtils.Console.print(`${'멤버십할인'.padEnd(baseNamePadding + 4, ' ')}${membershipAmount}`);
 
     const finalAmount = addNumberComma(receiptData.finalAmount).padStart(amountPadding, ' ');
-    MissionUtils.Console.print(`${'내실돈'.padEnd(baseNamePadding + 6, ' ')}${finalAmount}`);
+    MissionUtils.Console.print(`${'내실돈'.padEnd(baseNamePadding + 4, ' ')}${finalAmount}`);
   }
 
   static printNewLine() {

@@ -16,32 +16,46 @@ class OutputView {
       const productData = product.getProduct();
       const productName = productData.name;
       const productPrice = addNumberComma(productData.price);
-      const totalQuantity = productData.quantity.getQuantity().total;
-      const promotionQuantity = productData.quantity.getQuantity().promotion;
+      const totalQuantity = productData.quantity.total;
+      const promotionQuantity = productData.quantity.promotion;
       const normalQuantity = totalQuantity - promotionQuantity;
-      const productPromotion = productData.promotion ? productData.promotion.getPromotion().name : null;
+      const productPromotion = productData.promotion ? productData.promotion.name : null;
 
-      // 행사
-      if (promotionQuantity > 0) {
-        const result = `- ${productName} ${productPrice}원 ${promotionQuantity}개 ${productPromotion}`;
-        OutputView.printMenu(result);
-      }
-      // 일반
-      if (normalQuantity > 0) {
-        const result = `- ${productName} ${productPrice}원 ${normalQuantity}개`;
-        OutputView.printMenu(result);
-      }
-      // 행사 재고 없음
-      if (totalQuantity === 0) {
-        const result = `- ${productName} ${productPrice}원 재고 없음 ${productPromotion}`;
-        OutputView.printMenu(result);
-      }
-      // 일반 재고 없음
-      if (normalQuantity === 0) {
-        const result = `- ${productName} ${productPrice}원 재고 없음`;
-        OutputView.printMenu(result);
-      }
+      this.#printProductPromotion(productName, productPrice, promotionQuantity, productPromotion);
+      this.#printProductNormal(productName, productPrice, normalQuantity);
+      this.#printProductOutOfStock(productName, productPrice, totalQuantity, normalQuantity, productPromotion);
     });
+  }
+
+  static #printProductPromotion(productName, productPrice, promotionQuantity, productPromotion) {
+    if (promotionQuantity > 0) {
+      const result = `- ${productName} ${productPrice}원 ${promotionQuantity}개 ${productPromotion}`;
+      this.printMenu(result);
+    }
+  }
+
+  static #printProductNormal(productName, productPrice, normalQuantity) {
+    if (normalQuantity > 0) {
+      const result = `- ${productName} ${productPrice}원 ${normalQuantity}개`;
+      this.printMenu(result);
+    }
+  }
+
+  static #printProductOutOfStock(
+    productName,
+    productPrice,
+    totalQuantity,
+    normalQuantity,
+    productPromotion) {
+    if (totalQuantity === 0) {
+      const result = `- ${productName} ${productPrice}원 재고 없음 ${productPromotion}`;
+      this.printMenu(result);
+    }
+
+    if (normalQuantity === 0) {
+      const result = `- ${productName} ${productPrice}원 재고 없음`;
+      this.printMenu(result);
+    }
   }
 
   static printNewLine() {

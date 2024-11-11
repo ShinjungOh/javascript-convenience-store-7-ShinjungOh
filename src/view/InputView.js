@@ -16,6 +16,22 @@ class InputView {
       });
   }
 
+  static async askApplyPromotion(product) {
+    const input = await MissionUtils.Console.readLineAsync(`현재 ${product}은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)\n`);
+
+    this.#validateYesOrNo(input);
+
+    return input;
+  }
+
+  static async askCanNotApplyPromotion(product, quantity) {
+    const input = await MissionUtils.Console.readLineAsync(`현재 ${product} ${quantity}개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)\n`);
+
+    this.#validateYesOrNo(input);
+
+    return input;
+  }
+
   static #validateCart(cart) {
     this.#validateCartForm(cart);
   }
@@ -43,6 +59,16 @@ class InputView {
     const countTypeNumber = parseInt((item[dashIndex + 1]), 10);
     if (!countTypeNumber) {
       throw new Error(MESSAGES.error.productAndCountForm);
+    }
+  }
+
+  static #validateYesOrNo(membership) {
+    this.#validateYesOtNoForm(membership);
+  }
+
+  static #validateYesOtNoForm(string) {
+    if (string !== 'Y' && string !== 'N') {
+      throw new Error(MESSAGES.error.invalidInput);
     }
   }
 }

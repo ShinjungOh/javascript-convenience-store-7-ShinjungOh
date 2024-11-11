@@ -45,6 +45,26 @@ class ConvenienceStore {
         const buyQuantity = promotion.getPromotion().buy;
         const getQuantity = promotion.getPromotion().get;
         quantityPromotion = Math.floor(cartItem.quantity / buyQuantity) * getQuantity;
+
+        if (quantityPromotion > 0) {
+          const applyPromotion = InputView.askApplyPromotion(cartItem.name);
+
+          if (applyPromotion === 'Y') {
+            cartItem.quantity = cartItem.quantity + quantityPromotion;
+          }
+        }
+      }
+
+      const leftPromotionQuantity = product.quantity.getQuantity().promotion;
+
+      if (cartItem.quantity <= leftPromotionQuantity) {
+        product.quantity.setDecreasePromotion(cartItem.quantity);
+      }
+
+      if (cartItem.quantity > leftPromotionQuantity) {
+        const leftTotalQuantity = cartItem.quantity - leftPromotionQuantity;
+        product.quantity.setDecreasePromotion(leftPromotionQuantity);
+        product.quantity.setDecreaseTotal(leftTotalQuantity);
       }
 
       this.#cart.setItem(cartItem.name, new CartItem({
@@ -52,9 +72,7 @@ class ConvenienceStore {
         quantityPromotion,
       }));
 
-      product.quantity.setDecreasePromotion(cartItem.quantity);
-
-      // console.log(product.quantity.getQuantity());
+      console.log(product.quantity.getQuantity());
     });
   }
 

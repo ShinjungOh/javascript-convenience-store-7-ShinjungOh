@@ -1,6 +1,5 @@
 import { MissionUtils } from "@woowacourse/mission-utils";
 import { MESSAGES } from "../constants/messages.js";
-import CartItem from "../domain/CartItem.js";
 
 class InputView {
   static async readItem(message) {
@@ -9,21 +8,12 @@ class InputView {
 
   static async readLineAddCartItemList() {
     const input = await this.readItem(MESSAGES.input.askProductAndCount);
-
     this.#validateCart(input);
-
-    const splitInput = input.split(',');
-    const cartItemList = new Map();
-    splitInput.forEach((cartItemString) => {
-      const [name, quantity] = cartItemString.replace('[', '').replace(']', '').split('-');
-      const cartItem  = new CartItem({
-        name: name.trim(),
-        quantity: parseInt(quantity, 10),
+    return input.split(',')
+      .map((cartItemString) => {
+        const [name, quantity] = cartItemString.replace('[', '').replace(']', '').split('-');
+        return { name, quantity: parseInt(quantity, 10) };
       });
-      cartItemList.set(name, cartItem);
-    });
-
-    return cartItemList;
   }
 
   static #validateCart(cart) {

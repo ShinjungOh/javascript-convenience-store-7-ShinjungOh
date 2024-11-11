@@ -5,10 +5,6 @@ class Cart {
     this.#cart = new Map();
   }
 
-  initial(cartItemList) {
-    this.#cart = cartItemList;
-  }
-
   getCart() {
     return this.#cart;
   }

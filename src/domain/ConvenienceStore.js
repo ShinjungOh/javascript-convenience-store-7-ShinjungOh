@@ -5,10 +5,16 @@ import Promotion from "./Promotion.js";
 import Cart from "./Cart.js";
 import OutputView from "../view/OutputView.js";
 import InputView from "../view/InputView.js";
+import CartItem from "./CartItem.js";
+import { MESSAGES } from "../constants/messages.js";
 
 class ConvenienceStore {
   #products;
   #cart;
+
+  constructor() {
+    this.#cart = new Cart();
+  }
 
   async buy() {
     this.getPromotionList();
@@ -26,10 +32,29 @@ class ConvenienceStore {
 
   async #addCart() {
     const cartItemList = await InputView.readLineAddCartItemList();
-    this.#cart = new Cart();
-    this.#cart.initial(cartItemList);
+    cartItemList.forEach((cartItem) => {
+      this.#validateIsExistProduct(cartItem.name);
+      this.#validateIsOutOfStock(cartItem);
 
-    // TODO 재고 확인
+      this.#cart.set(cartItem.name, new CartItem(cartItem))
+    });
+  }
+
+  #validateIsExistProduct(item) {
+    const isExistProduct = this.#products.has(item);
+
+    if (!isExistProduct) {
+      throw new Error(MESSAGES.error.notExistProduct);
+    }
+  }
+
+  #validateIsOutOfStock(item) {
+    const product = this.#products.get(item.name);
+    const availableQuantity = product.quantity.getQuantity().total;
+
+    if (item.quantity > availableQuantity) {
+      throw new Error(MESSAGES.error.outOfStock);
+    }
   }
 
   getPromotionList() {

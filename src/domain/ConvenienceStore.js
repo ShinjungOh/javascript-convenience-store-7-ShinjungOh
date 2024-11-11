@@ -86,13 +86,23 @@ class ConvenienceStore {
         }
       }
 
-      this.#cart.setItem(cartItem.name, new CartItem({
-        ...cartItem,
-        quantityPromotion,
-      }));
-
-      console.log(product.quantity.getQuantity());
+      this.#createCartItem(cartItem.name, cartItem.quantity, quantityPromotion);
     }
+  }
+
+  #createCartItem(name, total, promotion) {
+    const quantity = new Quantity({
+      total,
+      promotion,
+    });
+
+    this.#cart.setItem(
+      name,
+      new CartItem({
+        name,
+        quantity,
+      })
+    );
   }
 
   #validateIsExistProduct(item) {

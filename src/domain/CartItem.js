@@ -1,19 +1,24 @@
 class CartItem {
   #name;
-  #quantity; // 총합
-  #quantityPromotion; // 증정받는 수량
+  #quantity;
 
-  constructor(cart) {
-    this.#name = cart.name;
-    this.#quantity = cart.quantity;
-    this.#quantityPromotion = cart.quantityPromotion;
+  constructor(cartIem) {
+    this.#name = cartIem.name;
+    this.#quantity = cartIem.quantity;
+  }
+
+  get name() {
+    return this.#name;
+  }
+
+  get quantity() {
+    return this.#quantity;
   }
 
   getCartItem() {
     return {
       name: this.#name,
       quantity: this.#quantity,
-      quantityPromotion: this.#quantityPromotion,
     }
   }
 }

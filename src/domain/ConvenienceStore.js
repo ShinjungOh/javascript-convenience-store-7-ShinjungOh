@@ -21,6 +21,7 @@ class ConvenienceStore {
     this.#products = this.getProductList();
     this.printMenu();
     await this.#addCart();
+    await this.#applyMembership();
     this.#cart.print();
   }
 
@@ -28,6 +29,13 @@ class ConvenienceStore {
     OutputView.printWelcomeGreeting();
     OutputView.printProducts(this.#products);
     OutputView.printNewLine();
+  }
+
+  async #applyMembership() {
+    const applyMembershipAnswer = await InputView.applyMembership();
+    if (applyMembershipAnswer === 'Y') {
+      this.#cart.applyMembership();
+    }
   }
 
   async #addCart() {

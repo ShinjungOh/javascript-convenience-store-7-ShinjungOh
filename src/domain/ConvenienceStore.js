@@ -1,11 +1,13 @@
 import * as fs from "node:fs";
 import Product from "./Product.js";
-import Quantity from "./Quantity.js";
 import Promotion from "./Promotion.js";
+import Quantity from "./Quantity.js";
 import Cart from "./Cart.js";
-import OutputView from "../view/OutputView.js";
-import InputView from "../view/InputView.js";
 import CartItem from "./CartItem.js";
+import Order from "./Order.js";
+import Receipt from "./Receipt.js";
+import InputView from "../view/InputView.js";
+import OutputView from "../view/OutputView.js";
 import { MESSAGES } from "../constants/messages.js";
 
 class ConvenienceStore {
@@ -15,6 +17,7 @@ class ConvenienceStore {
 
   constructor() {
     this.#cart = new Cart();
+    this.#order = new Order();
   }
 
   async buy() {
@@ -34,19 +37,18 @@ class ConvenienceStore {
     await this.#addCart();
     await this.#applyMembership();
     this.#order.add(this.#cart);
+    this.#printReceipt();
 
     const continueShoppingAnswer = await InputView.askContinueShopping();
     if (continueShoppingAnswer === 'Y') {
       this.#cart.clear();
       return this.#startShopping();
     }
-
-    this.#printReceipt();
   }
 
   #printReceipt() {
-    const receipt = this.#order.calculateTotal();
-    // TODO 최종 영수증 출력
+    const receipt = new Receipt(this.#products, this.#order);
+    // TODO 프린트 출력
   }
 
   async #applyMembership() {
